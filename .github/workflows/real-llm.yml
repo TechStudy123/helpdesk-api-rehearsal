@@ -1,0 +1,22 @@
+# 本物の LLM で、攻撃の例の一部を試す: 手で起動する（Actions の画面の「Run workflow」）
+# API キーは Secrets に登録する。フォーク（他人の写し）からのプルリクエストでは動かさない
+name: real-llm
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-llm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RUN_REAL_LLM: "1"
+      LLM_PROVIDER: gemini
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+      - run: uv sync --locked
+      - run: uv run pytest tests/test_real_llm.py -v

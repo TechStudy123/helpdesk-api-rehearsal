@@ -27,8 +27,9 @@ def llm(monkeypatch):
     monkeypatch.setattr(config, "LLM_MODEL", env.get("LLM_MODEL", config.LLM_MODEL))
     monkeypatch.setattr(config, "MIN_SCORE", 0.5)
     for key in ("GEMINI_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
-        if env.get(key):
-            monkeypatch.setenv(key, env[key])
+        value = env.get(key) or os.environ.get(key)          # CI では Secrets の値（環境変数）を使う
+        if value:
+            monkeypatch.setenv(key, value)
     return get_llm()
 
 
